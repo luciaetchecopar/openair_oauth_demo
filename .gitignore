@@ -1,0 +1,6 @@
+.venv/
+tokens.json
+__pycache__/
+*.pyc
+.idea/
+test.py

@@ -1,0 +1,80 @@
+import base64
+import urllib.parse
+import webbrowser
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import requests
+import time
+from token_store import save_tokens
+
+client_id = "78517_1vJn9AI90xztYVfn"
+client_secret = "Ay1YHnzy-2-CkfVAudfdDgECt3fa1IeA2BhPopnOdCTgpkjCEcFyiLGT3wjOLSb7EylFkLsFIbWxddXAEBhCwA"
+redirect_uri = "http://localhost:3000/callback"
+sandbox_domain = "7050007-blend360-llc.app.sandbox.netsuitesuiteprojectspro.com"
+scope = "rest"
+state = "secureRandomState123"
+
+params = {
+    "response_type": "code",
+    "client_id": client_id,
+    "redirect_uri": redirect_uri,
+    "scope": scope,
+    "state": state
+}
+auth_url = f"https://{sandbox_domain}/login/oauth2/v1/authorize?" + urllib.parse.urlencode(params)
+print("\n[1] Opening browser to authorize application...\n")
+webbrowser.open(auth_url)
+
+authorization_code = None
+
+class OAuthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        global authorization_code
+        parsed_path = urllib.parse.urlparse(self.path)
+        query = urllib.parse.parse_qs(parsed_path.query)
+        if "code" in query:
+            authorization_code = query["code"][0]
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Authorization successful! You can close this window.")
+        else:
+            self.send_response(400)
+            self.end_headers()
+            self.wfile.write(b"Authorization failed or cancelled.")
+
+print("[2] Waiting for redirect with authorization code...")
+httpd = HTTPServer(("localhost", 3000), OAuthHandler)
+httpd.handle_request()
+
+if not authorization_code:
+    print("\u274c Authorization failed. No code received.")
+    exit()
+
+print(f"\n\u2705 Authorization code received: {authorization_code}\n")
+
+token_url = f"https://{sandbox_domain}/login/oauth2/v1/token"
+auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+headers = {
+    "Authorization": f"Basic {auth_header}",
+    "Content-Type": "application/x-www-form-urlencoded"
+}
+data = {
+    "grant_type": "authorization_code",
+    "code": authorization_code,
+    "redirect_uri": redirect_uri
+}
+
+print("[3] Exchanging authorization code for tokens...")
+response = requests.post(token_url, headers=headers, data=data)
+
+if response.ok:
+    tokens = response.json()
+    expires_at = int(time.time()) + tokens["expires_in"]
+    save_tokens(tokens["access_token"], tokens["refresh_token"], tokens["expires_in"], expires_at)
+    print("\n\U0001F389 Tokens received successfully:")
+    print("Access Token:\n", tokens["access_token"])
+    print("\nRefresh Token:\n", tokens["refresh_token"])
+    print("\nExpires In (seconds):", tokens["expires_in"])
+else:
+    print("\n\u274c Failed to get access token:")
+    print("Status:", response.status_code)
+    print("Response:", response.text)
