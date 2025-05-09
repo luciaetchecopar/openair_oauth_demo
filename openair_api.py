@@ -96,7 +96,6 @@ def get_billable_project_ids(limit=1000):
             break
 
     print(f"✅ Total billable project IDs found: {len(billable_project_ids)}")
-    print("🧾 Sample project IDs:", list(billable_project_ids)[:10])
     return billable_project_ids
 
 def get_time_entries(start_date, end_date, user_id=None, limit=1000):
@@ -121,8 +120,8 @@ def get_time_entries(start_date, end_date, user_id=None, limit=1000):
     offset = 0
     while True:
         filters = [
-            f'accountingDate ON_OR_AFTER "{start_date}"',
-            f'accountingDate ON_OR_BEFORE "{end_date}"'
+            f'date ON_OR_AFTER "{start_date}"',
+            f'date ON_OR_BEFORE "{end_date}"'
         ]
         if user_id:
             filters.append(f'userId EQUAL {user_id}')
@@ -148,11 +147,6 @@ def get_time_entries(start_date, end_date, user_id=None, limit=1000):
         filtered_entries = [e for e in entries if e.get("projectId") in billable_project_ids]
         for e in filtered_entries:
             print(f"✅ Entry {e.get('id')} kept (projectId={e.get('projectId')})")
-        """
-        for e in entries:
-            if e.get("projectId") not in billable_project_ids:
-                print(f"❌ Entry {e.get('id')} skipped (non-billable projectId={e.get('projectId')})")
-        """
         all_entries.extend(filtered_entries)
 
         meta = response.json().get("meta", {})
