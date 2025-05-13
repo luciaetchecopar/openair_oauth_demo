@@ -32,7 +32,7 @@ pip install -r requirements.txt
 
 Ejecutamos el siguiente script para conectarnos al endpoint /users de la API REST de OpenAir. Este script obtiene todos los usuarios de OpenAir, y crea una tabla llamada users_summary con las columnas id,firstName,lastName y email.
 ```
-python test_users.py
+python users.py
 ```
 ### Obtención de los time entries de proyectos billable:
 
@@ -41,13 +41,17 @@ Luego, se conecta al endpoint /time-entries para obtener las cargas de horas en 
 Los datos se guardan en una tabla llamada billable_hours_summary, con las siguientes columnas: userId, total_billable_hours, start_date y end_date.
 
 ```
-python test_time_entries.py
+python time_entries.py
 ```
 ### Refrescar el token OAuth2:
 
-Cuando el token expira, ejecutamos el siguiente script. En el navegador, selecciona la cuenta correspondiente a 7050007 Blend360 LLC para refrescar el token:
+Cuando el token expira, ejecutamos el siguiente script dentro de la carpeta access_openair. En el navegador, selecciona la cuenta correspondiente a 7050007 Blend360 LLC para refrescar el token:
 ```
 python oauth2_openair.py
 ```
 
-
+### Para correr tests pytests:
+Parados en main ejecutamos:
+```
+PYTHONPATH=. pytest tests/
+```
