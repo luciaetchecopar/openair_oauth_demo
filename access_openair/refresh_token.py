@@ -1,7 +1,7 @@
 import base64
 import requests
 import time
-from token_store import save_tokens, load_tokens
+from access_openair.token_store import save_tokens, load_tokens
 
 client_id = "78517_1vJn9AI90xztYVfn"
 client_secret = "Ay1YHnzy-2-CkfVAudfdDgECt3fa1IeA2BhPopnOdCTgpkjCEcFyiLGT3wjOLSb7EylFkLsFIbWxddXAEBhCwA"
