@@ -1,7 +1,8 @@
 import json
 import time
+import os
 
-TOKEN_FILE = "tokens.json"
+TOKEN_FILE = os.path.join(os.path.dirname(__file__), "tokens.json")
 
 def save_tokens(access_token, refresh_token, expires_in, expires_at=None):
     if not expires_at:
