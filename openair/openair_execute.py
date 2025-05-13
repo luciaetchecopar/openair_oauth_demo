@@ -1,6 +1,6 @@
 import requests
-from token_store import load_tokens, is_token_expired
-from refresh_token import refresh_access_token
+from access_openair.token_store import load_tokens, is_token_expired
+from access_openair.refresh_token import refresh_access_token
 
 api_key = "SJTZWRmQc3FE726EmgU5"
 namespace = "default"
