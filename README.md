@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 ### Prueba conexión al endpoint de usuarios:
 
-Ejecutamos el siguiente script para conectarnos al endpoint /users de la API REST de OpenAir. Este script obtiene todos los usuarios de OpenAir, y crea una tabla llamada users_summary con las columnas id,firstName,lastName y email.
+Ejecutamos el siguiente script para conectarnos al endpoint /users de la API REST de OpenAir. Este script obtiene todos los usuarios de OpenAir, y crea una tabla llamada users_summary con las columnas id, firstName, lastName, email y etl_time.
 ```
 python users.py
 ```
@@ -38,7 +38,7 @@ python users.py
 
 Este script primero consulta el endpoint /project-tasks para identificar los proyectos billables, es decir, facturables a clientes.
 Luego, se conecta al endpoint /time-entries para obtener las cargas de horas en OpenAir, pero solo de los proyectos billables, dentro de un rango de fechas especificado.
-Los datos se guardan en una tabla llamada billable_hours_summary, con las siguientes columnas: userId, total_billable_hours, start_date y end_date.
+Los datos se guardan en una tabla llamada billable_hours_summary, con las siguientes columnas: userId, total_billable_hours, start_date, end_date y etl_time.
 
 ```
 python time_entries.py
